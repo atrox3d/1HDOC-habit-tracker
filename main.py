@@ -148,8 +148,14 @@ def delete_pixel(username, token, graphid, date=dt.now()):
     return response
 
 
-create_user(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN)
-create_graph(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", "Cycling Graph", "km", "float", "sora")
-post_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", 1)
-update_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", 100)
-delete_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1")
+create_user(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN)
+create_graph(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN,
+             graph_id="graph1",
+             name="Cycling Graph",
+             unit="km",
+             graph_type="float",
+             color="sora"
+)
+post_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1", quantity=1)
+update_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1", quantity=100)
+delete_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1")
