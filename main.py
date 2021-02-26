@@ -73,7 +73,8 @@ def post_pixel(username, token, graphid, quantity, date=dt.now()):
     post a single pixel in the specified graph
     """
     if isinstance(date, dt):
-        date = str(date.date()).replace("-", "")
+        # date = str(date.date()).replace("-", "")
+        date = date.strftime("%Y%m%d")
     if isinstance(date, str):
         # date = date.replace("-", "")
         pass
