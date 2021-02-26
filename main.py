@@ -5,12 +5,17 @@ from datetime import datetime as dt
 
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
 
+HTTP_GET = requests.get
+HTTP_POST = requests.post
+HTTP_PUT = requests.put
+HTTP_DEL = requests.delete
 
-def pixela_api(username, token, endpoint, params=None, moreheaders=None):
+
+def pixela_api(http_method, endpoint, username, token, params=None, moreheaders=None):
     """
     call pixela api, generalized
     """
-    print(f"calling {endpoint}")
+    print(f"calling request.{http_method.__name__} {endpoint}")
     if params:
         print(f"\twith params: {params}")
     # authentication via headers, not in the url
@@ -20,7 +25,7 @@ def pixela_api(username, token, endpoint, params=None, moreheaders=None):
         headers.update(moreheaders)
     print(f"\twith headers: {headers}")
     #
-    response = requests.post(url=endpoint, json=params, headers=headers)
+    response = http_method(url=endpoint, json=params, headers=headers)
     if response.status_code == 200:
         print("SUCCESS|status: ", response.status_code)
     else:
@@ -39,10 +44,13 @@ def create_user(username: str, token: str):
         "agreeTermsOfService": "yes",
         "notMinor": "yes",
     }
-    # print(f"calling {PIXELA_ENDPOINT}\nwith params: {user_params}")
-    # response = requests.post(url=PIXELA_ENDPOINT, json=user_params)
-    # print("response: ", response.text)
-    response = pixela_api(username, token, PIXELA_ENDPOINT, user_params)
+    response = pixela_api(
+        http_method=HTTP_POST,
+        endpoint=PIXELA_ENDPOINT,
+        username=username,
+        token=token,
+        params=user_params
+    )
     # response.raise_for_status()
     return response
 
@@ -59,10 +67,13 @@ def create_graph(username, token, graph_id, name, unit, graph_type, color):
         "color": color
     }
     GRAPH_ENDPOINT = f"{PIXELA_ENDPOINT}/{username}/graphs"
-    # print(f"calling {GRAPH_ENDPOINT}\nwith params: {graph_config}\nand headers: {headers}")
-    # response = requests.post(url=GRAPH_ENDPOINT, json=graph_config, headers=headers)
-    # print("response: ", response.text)
-    response = pixela_api(username, token, GRAPH_ENDPOINT, graph_config)
+    response = pixela_api(
+        http_method=HTTP_POST,
+        endpoint=GRAPH_ENDPOINT,
+        username=username,
+        token=token,
+        params=graph_config
+    )
     # response.raise_for_status()
     print(f"get the graph here: {GRAPH_ENDPOINT}/{graph_config['id']}.html")
     return response
@@ -73,18 +84,66 @@ def post_pixel(username, token, graphid, quantity, date=dt.now()):
     post a single pixel in the specified graph
     """
     if isinstance(date, dt):
-        # date = str(date.date()).replace("-", "")
         date = date.strftime("%Y%m%d")
     if isinstance(date, str):
-        # date = date.replace("-", "")
         pass
 
     params = {
         "date": date,
         "quantity": str(quantity)
     }
-    PUTPIXEL_ENDPOINT = f"{PIXELA_ENDPOINT}/{username}/graphs/{graphid}"
-    response = pixela_api(username, token, PUTPIXEL_ENDPOINT, params)
+    POSTPIXEL_ENDPOINT = f"{PIXELA_ENDPOINT}/{username}/graphs/{graphid}"
+    response = pixela_api(
+        http_method=HTTP_POST,
+        endpoint=POSTPIXEL_ENDPOINT,
+        username=username,
+        token=token,
+        params=params
+    )
+    response.raise_for_status()
+    return response
+
+
+def update_pixel(username, token, graphid, quantity, date=dt.now()):
+    """
+    update a single pixel in the specified graph
+    """
+    if isinstance(date, dt):
+        date = date.strftime("%Y%m%d")
+    if isinstance(date, str):
+        pass
+
+    params = {
+        "quantity": str(quantity)
+    }
+    UPDATEPIXEL_ENDPOINT = f"{PIXELA_ENDPOINT}/{username}/graphs/{graphid}/{date}"
+    response = pixela_api(
+        http_method=HTTP_PUT,
+        endpoint=UPDATEPIXEL_ENDPOINT,
+        username=username,
+        token=token,
+        params=params
+    )
+    response.raise_for_status()
+    return response
+
+
+def delete_pixel(username, token, graphid, date=dt.now()):
+    """
+    delete a single pixel in the specified graph
+    """
+    if isinstance(date, dt):
+        date = date.strftime("%Y%m%d")
+    if isinstance(date, str):
+        pass
+
+    DELETEPIXEL_ENDPOINT = f"{PIXELA_ENDPOINT}/{username}/graphs/{graphid}/{date}"
+    response = pixela_api(
+        http_method=HTTP_DEL,
+        endpoint=DELETEPIXEL_ENDPOINT,
+        username=username,
+        token=token,
+    )
     response.raise_for_status()
     return response
 
@@ -92,3 +151,5 @@ def post_pixel(username, token, graphid, quantity, date=dt.now()):
 create_user(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN)
 create_graph(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", "Cycling Graph", "km", "float", "sora")
 post_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", 1)
+update_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1", 100)
+delete_pixel(myob.PIXELA_USERNAME, myob.PIXELA_TOKEN, "graph1")
