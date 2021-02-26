@@ -2,27 +2,33 @@ import requests
 import myob
 import json
 
-
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
-#
-# create user: one shot
-#
-def create_user(username, token):
+
+
+def create_user(username: str, token: str):
+    """
+    create user: one shot
+    """
     user_params = {
         "username": username,
         "token": token,
         "agreeTermsOfService": "yes",
         "notMinor": "yes",
     }
-    print(f"calling {PIXELA_ENDPOINT} with params: {user_params}")
+    print(f"calling {PIXELA_ENDPOINT}\nwith params: {user_params}")
     response = requests.post(url=PIXELA_ENDPOINT, json=user_params)
-    print(response.text)
+    print("response: ", response.text)
+
+
 #
 #   create graph: one shot
 #
 def create_graph(graph_id, name, unit, graph_type, color):
+    """
+    create graph: one shot
+    """
     graph_config = {
-        "id":   graph_id,
+        "id": graph_id,
         "name": name,
         "unit": unit,
         "type": graph_type,
@@ -35,9 +41,9 @@ def create_graph(graph_id, name, unit, graph_type, color):
         "X-USER-TOKEN": myob.PIXELA_TOKEN
     }
     GRAPH_ENDPOINT = f"{PIXELA_ENDPOINT}/{myob.PIXELA_USERNAME}/graphs"
-    print(f"calling {GRAPH_ENDPOINT} with params: {graph_config} and headers: {headers}")
+    print(f"calling {GRAPH_ENDPOINT}\nwith params: {graph_config}\nand headers: {headers}")
     response = requests.post(url=GRAPH_ENDPOINT, json=graph_config, headers=headers)
-    print(response.text)
+    print("response: ", response.text)
     print(f"get the graph here: {GRAPH_ENDPOINT}/{graph_config['id']}.html")
 
 
