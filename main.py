@@ -5,7 +5,7 @@ import util
 
 
 util.add_parent_import()
-from _myob import habit_tracker
+from _myob.habit_tracker import myob
 
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
 
@@ -152,14 +152,14 @@ def delete_pixel(username, token, graphid, date=dt.now()):
     return response
 
 
-create_user(username=habit_tracker.PIXELA_USERNAME, token=habit_tracker.PIXELA_TOKEN)
-create_graph(username=habit_tracker.PIXELA_USERNAME, token=habit_tracker.PIXELA_TOKEN,
+create_user(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN)
+create_graph(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN,
              graph_id="graph1",
              name="Cycling Graph",
              unit="km",
              graph_type="float",
              color="sora"
 )
-post_pixel(username=habit_tracker.PIXELA_USERNAME, token=habit_tracker.PIXELA_TOKEN, graphid="graph1", quantity=1)
-update_pixel(username=habit_tracker.PIXELA_USERNAME, token=habit_tracker.PIXELA_TOKEN, graphid="graph1", quantity=100)
+post_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1", quantity=1)
+update_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1", quantity=100)
 # delete_pixel(username=myob.PIXELA_USERNAME, token=myob.PIXELA_TOKEN, graphid="graph1")
