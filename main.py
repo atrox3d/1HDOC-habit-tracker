@@ -1,8 +1,8 @@
 import requests
 import json
 from datetime import datetime as dt
-import util
-util.add_parent_import()
+import util.parentimport
+util.parentimport.add_parent_import()
 from _myob.habit_tracker import myob
 
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
